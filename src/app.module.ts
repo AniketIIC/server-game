@@ -2,11 +2,15 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SocketModule } from './socket/socket.module';
-import { EventModule } from './events/event.module';
-
+import { EventsModule } from './events/event.module';
+import { DatabaseModule } from './common/database/mongodb.provider';
 
 @Module({
-  imports: [SocketModule, EventModule],
+  imports: [
+    SocketModule,
+    DatabaseModule,
+    EventsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
