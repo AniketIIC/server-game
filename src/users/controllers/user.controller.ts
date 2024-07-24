@@ -20,16 +20,16 @@ export class EventController {
     }
   }
 
-  @Get()
-  async getAllEvents(@Res() res: Response): Promise<void> {
-    try {
-      const events = await this.eventService.getAllEvents();
-      res.status(HttpStatus.OK).json(events);
-    } catch (error) {
-      console.error(error);
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .send('Error retrieving events');
-    }
-  }
+  // @Get()
+  // async getAllEvents(@Res() res: Response): Promise<void> {
+  //   try {
+  //     const events = await this.eventService.getAllEvents();
+  //     res.status(HttpStatus.OK).json(events);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res
+  //       .status(HttpStatus.INTERNAL_SERVER_ERROR)
+  //       .send('Error retrieving events');
+  //   }
+  // }
 }
