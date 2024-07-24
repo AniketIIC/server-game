@@ -16,12 +16,17 @@ export class TournamentService {
     ) { }
 
     async shuffle(data) {
-        // const { tournamentId } = data
+        const { tournamentId } = data
         const socket = this.socketGateway.nsp.server
         const tournament = await this.eventModel.findOne({
-            eventid: 'TR-4343434343'
+            eventid: tournamentId
         })
-        const tournamentId = tournament.eventid
+
+        if (tournament.status === true) {
+            return;
+        }
+
+        // const tournamentId = tournament.eventid
         const array = tournament.users
         let arrayLen = array.length
         let kickedMember;

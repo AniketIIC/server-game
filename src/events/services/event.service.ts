@@ -4,11 +4,23 @@ import { Model } from 'mongoose';
 import * as schedule from 'node-schedule';
 import { Event } from '../models/event.model';
 import { v4 as uuidv4 } from 'uuid';
+<<<<<<< HEAD
 import * as moment from 'moment';
 
 @Injectable()
 export class EventService {
   constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
+=======
+import * as moment from 'moment'
+import { TournamentService } from 'src/socket/tournament';
+
+@Injectable()
+export class EventService {
+  constructor(
+    @InjectModel(Event.name) private eventModel: Model<Event>,
+    private tournamentService: TournamentService
+  ) { }
+>>>>>>> 5898ab10b48a18fef3a52f223af2a5076a02bc41
 
   async createEvent(createEventDto: any): Promise<Event> {
     const eventid = `TR-${uuidv4()}`;
@@ -32,7 +44,10 @@ export class EventService {
     const startDate = new Date(startTime);
     schedule.scheduleJob(startDate, async () => {
       console.log(`Event ${eventid} is starting now!`);
-      await this.updateEventStatus(eventid, true);
+      // await this.updateEventStatus(eventid, true);
+      await this.tournamentService.shuffle({
+        tournamentId: eventid
+      })
     });
   }
 
