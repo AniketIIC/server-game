@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Res, HttpStatus, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  HttpStatus,
+  Get,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { EventService } from '../services/event.service';
 import { Response } from 'express';
 import { TournamentService } from 'src/socket/tournament';
@@ -8,7 +17,7 @@ export class EventController {
   constructor(
     private readonly eventService: EventService,
     private tournamentService: TournamentService,
-  ) { }
+  ) {}
 
   @Post()
   async createEvent(
@@ -47,7 +56,21 @@ export class EventController {
 
   @Post('join')
   async joinEvent(@Body() body: Record<string, any>) {
-    await this.eventService.joinTournament(body)
-    return {}
+    await this.eventService.joinTournament(body);
+    return {};
+  }
+
+  @Delete(':eventid')
+  async deleteEventById(
+    @Param('eventid') eventid: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    try {
+      const event = await this.eventService.deleteEventById(eventid);
+      res.status(HttpStatus.OK).json(event);
+    } catch (error) {
+      console.error(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error deleting event');
+    }
   }
 }
