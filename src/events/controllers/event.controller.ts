@@ -8,7 +8,7 @@ export class EventController {
   constructor(
     private readonly eventService: EventService,
     private tournamentService: TournamentService,
-  ) {}
+  ) { }
 
   @Post()
   async createEvent(
@@ -43,5 +43,11 @@ export class EventController {
     await this.tournamentService.shuffle({
       tournamentId,
     });
+  }
+
+  @Post('join')
+  async joinEvent(@Body() body: Record<string, any>) {
+    await this.eventService.joinTournament(body)
+    return {}
   }
 }
