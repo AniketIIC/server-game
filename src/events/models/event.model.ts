@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema()
-export class Event extends Document {
+export class Event {
   @Prop({ required: true })
   eventid: string;
 
@@ -26,3 +26,4 @@ export class Event extends Document {
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
+export type EventDocument = Event & Document

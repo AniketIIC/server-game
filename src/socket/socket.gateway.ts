@@ -17,8 +17,11 @@ export class SocketGateway
         // await this.connectionHandlerService.handleDisconnect(client);
     }
 
-    async handleConnection(client: any, ...args: any[]) {
+    async handleConnection(client: Socket, ...args: any[]) {
         // await this.connectionHandlerService.handleConnection(client, ...args);
+        console.log("client connected: ", client.id)
+        const { userName } = client.handshake.query
+        client['data'] = { userName }
     }
 
     async afterInit(nsp: Namespace) { }
