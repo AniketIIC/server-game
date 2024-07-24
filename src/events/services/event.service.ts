@@ -42,4 +42,18 @@ export class EventService {
   async updateEventStatus(eventid: string, status: boolean): Promise<void> {
     await this.eventModel.updateOne({ eventid }, { status });
   }
+
+  async joinTournament(inputs: Record<string, any>) {
+    const { userName, tournamentId } = inputs
+    await this.eventModel.findOneAndUpdate(
+      {
+        eventid: tournamentId
+      },
+      {
+        $push: {
+          users: userName
+        }
+      }
+    )
+  }
 }

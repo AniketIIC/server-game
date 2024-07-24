@@ -57,6 +57,12 @@ export class TournamentService {
             }
         }
 
+        await this.eventModel.findOneAndUpdate({ eventid: tournamentId }, {
+            $set: {
+                status: true
+            }
+        })
+
     }
 
     async findMember(memberName, tournamentId) {
