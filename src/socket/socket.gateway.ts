@@ -14,14 +14,18 @@ export class SocketGateway
     nsp: Namespace
 
     async handleDisconnect(@ConnectedSocket() client: Socket) {
-        // await this.connectionHandlerService.handleDisconnect(client);
+        const workspace = client.nsp
+        workspace.emit('USER-LEAVE', { userName: client['data']['userName'] })
+        console.log("Client disconnected: ", client.id)
+
     }
 
     async handleConnection(client: Socket, ...args: any[]) {
-        // await this.connectionHandlerService.handleConnection(client, ...args);
-        console.log("client connected: ", client.id)
+        const workspace = client.nsp
         const { userName } = client.handshake.query
         client['data'] = { userName }
+        workspace.emit('USER-JOIN', { userName })
+        console.log("Client connected: ", client.id)
     }
 
     async afterInit(nsp: Namespace) { }
