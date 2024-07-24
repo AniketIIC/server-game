@@ -49,6 +49,11 @@ export class SocketGateway
 
     }
 
+    @SubscribeMessage("WIN")
+    handleWin(@ConnectedSocket() client: Socket, @MessageBody() body: Record<string, any>) {
+        const { userName } = body
+    }
+
     async handleDisconnect(@ConnectedSocket() client: Socket) {
         const workspace = client.nsp
         const userName = client['data']['userName']
@@ -58,9 +63,9 @@ export class SocketGateway
             isFinished: false
         })
 
-        const opponent = bracket.userName1 === userName ? bracket.userName2 : bracket.userName1
 
         if (bracket) {
+            const opponent = bracket.userName1 === userName ? bracket.userName2 : bracket.userName1
             const connectedMembers = await workspace.fetchSockets()
             for (const member of connectedMembers) {
                 const clientData = member.data
