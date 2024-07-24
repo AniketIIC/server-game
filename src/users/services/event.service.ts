@@ -46,8 +46,4 @@ export class EventService {
   async updateEventStatus(eventid: string, status: boolean): Promise<void> {
     await this.eventModel.updateOne({ eventid }, { status });
   }
-
-  async getAllEvents(): Promise<Event[]> {
-    return this.eventModel.find().exec();
-  }
 }
