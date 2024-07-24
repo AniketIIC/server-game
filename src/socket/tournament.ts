@@ -5,6 +5,7 @@ import { SocketGateway } from "./socket.gateway";
 import { InjectModel } from "@nestjs/mongoose";
 import { Event, EventDocument } from "src/events/models/event.model";
 import { Model } from "mongoose";
+import { Bracket, BracketDocument } from "./schemas/bracket.schema";
 
 // }
 
@@ -12,7 +13,8 @@ import { Model } from "mongoose";
 export class TournamentService {
     constructor(
         private socketGateway: SocketGateway,
-        @InjectModel(Event.name) private eventModel: Model<EventDocument>
+        @InjectModel(Event.name) private eventModel: Model<EventDocument>,
+        @InjectModel(Bracket.name) private bracketModel: Model<BracketDocument>
     ) { }
 
     async shuffle(data) {
@@ -42,6 +44,8 @@ export class TournamentService {
             pairsArr.push([array[i], array[arrayLen - (i + 1)]])
         }
 
+        const brackets = [];
+
         for (const pairs of pairsArr) {
             const memberName1 = pairs[0]
             const memberName2 = pairs[1]
@@ -52,8 +56,19 @@ export class TournamentService {
                 const roomName = `${memberName1}-${memberName2}`
                 member1Client.join(roomName)
                 member2Client.join(roomName)
-                socket.of(`/${tournamentId}`).to(member1Client.id).emit("START")
-                socket.of(`/${tournamentId}`).to(member2Client.id).emit("START")
+                socket.of(`/${tournamentId}`).to(member1Client.id).emit("START", {
+                    users: [memberName1, memberName2]
+                })
+                socket.of(`/${tournamentId}`).to(member2Client.id).emit("START", {
+                    users: [memberName1, memberName2]
+                })
+                brackets.push({
+                    tournamentId: tournamentId,
+                    userName1: memberName1,
+                    userName2: memberName2,
+                    round: 1,
+                    isFinished: false
+                })
             }
         }
 
@@ -62,6 +77,8 @@ export class TournamentService {
                 status: true
             }
         })
+
+        await this.bracketModel.insertMany(brackets)
 
     }
 
