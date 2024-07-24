@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as schedule from 'node-schedule';
@@ -12,7 +16,7 @@ export class EventService {
   constructor(
     @InjectModel(Event.name) private eventModel: Model<Event>,
     private tournamentService: TournamentService,
-  ) { }
+  ) {}
 
   async createEvent(createEventDto: any): Promise<Event> {
     const eventid = `TR-${uuidv4()}`;
@@ -52,16 +56,26 @@ export class EventService {
   }
 
   async joinTournament(inputs: Record<string, any>) {
-    const { userName, tournamentId } = inputs
+    const { userName, tournamentId } = inputs;
+
+    const event = await this.eventModel.findOne({ eventid: tournamentId });
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    if (event.users.includes(userName)) {
+      throw new BadRequestException('User already joined');
+    }
     await this.eventModel.findOneAndUpdate(
       {
-        eventid: tournamentId
+        eventid: tournamentId,
       },
       {
         $push: {
-          users: userName
-        }
-      }
-    )
+          users: userName,
+        },
+      },
+    );
   }
 }
