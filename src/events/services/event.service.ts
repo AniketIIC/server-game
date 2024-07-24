@@ -4,17 +4,21 @@ import { Model } from 'mongoose';
 import * as schedule from 'node-schedule';
 import { Event } from '../models/event.model';
 import { v4 as uuidv4 } from 'uuid';
-import * as moment from 'moment'
+import * as moment from 'moment';
 
 @Injectable()
 export class EventService {
-  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) { }
+  constructor(@InjectModel(Event.name) private eventModel: Model<Event>) {}
 
   async createEvent(createEventDto: any): Promise<Event> {
     const eventid = `TR-${uuidv4()}`;
-    const { time } = createEventDto
-    const eventStartTime = moment().add(time, 'minutes').toISOString()
-    const newEvent = new this.eventModel({ ...createEventDto, eventid, startTime: eventStartTime });
+    const { time } = createEventDto;
+    const eventStartTime = moment().add(time, 'minutes').toISOString();
+    const newEvent = new this.eventModel({
+      ...createEventDto,
+      eventid,
+      startTime: eventStartTime,
+    });
     const savedEvent = await newEvent.save();
 
     if (eventStartTime) {
