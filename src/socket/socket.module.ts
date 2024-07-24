@@ -10,6 +10,7 @@ import { EventSchema } from 'src/events/models/event.model';
         MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }]),
     ],
     controllers: [SocketController],
-    providers: [SocketGateway, TournamentService]
+    providers: [SocketGateway, TournamentService],
+    exports: [TournamentService]
 })
 export class SocketModule { }
