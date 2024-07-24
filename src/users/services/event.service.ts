@@ -12,7 +12,7 @@ export class EventService {
   constructor(
     @InjectModel(Event.name) private eventModel: Model<Event>,
     private tournamentService: TournamentService,
-  ) { }
+  ) {}
 
   async createEvent(createEventDto: any): Promise<Event> {
     const eventid = `TR-${uuidv4()}`;
@@ -45,23 +45,5 @@ export class EventService {
 
   async updateEventStatus(eventid: string, status: boolean): Promise<void> {
     await this.eventModel.updateOne({ eventid }, { status });
-  }
-
-  async getAllEvents(): Promise<Event[]> {
-    return this.eventModel.find().exec();
-  }
-
-  async joinTournament(inputs: Record<string, any>) {
-    const { userName, tournamentId } = inputs
-    await this.eventModel.findOneAndUpdate(
-      {
-        eventid: tournamentId
-      },
-      {
-        $push: {
-          users: userName
-        }
-      }
-    )
   }
 }

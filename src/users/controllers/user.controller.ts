@@ -1,14 +1,10 @@
 import { Controller, Post, Body, Res, HttpStatus, Get } from '@nestjs/common';
 import { EventService } from '../services/event.service';
 import { Response } from 'express';
-import { TournamentService } from 'src/socket/tournament';
 
 @Controller('event')
 export class EventController {
-  constructor(
-    private readonly eventService: EventService,
-    private tournamentService: TournamentService,
-  ) {}
+  constructor(private readonly eventService: EventService) {}
 
   @Post()
   async createEvent(
@@ -35,13 +31,5 @@ export class EventController {
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .send('Error retrieving events');
     }
-  }
-
-  @Post('start')
-  async startTournament(@Body() body: Record<string, any>) {
-    const { tournamentId } = body;
-    await this.tournamentService.shuffle({
-      tournamentId,
-    });
   }
 }
