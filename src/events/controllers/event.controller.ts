@@ -11,13 +11,17 @@ import {
 import { EventService } from '../services/event.service';
 import { Response } from 'express';
 import { TournamentService } from 'src/socket/tournament';
+import { InjectModel } from '@nestjs/mongoose';
+import { Bracket, BracketDocument } from 'src/socket/schemas/bracket.schema';
+import { Model } from 'mongoose';
 
 @Controller('event')
 export class EventController {
   constructor(
     private readonly eventService: EventService,
     private tournamentService: TournamentService,
-  ) {}
+    @InjectModel(Bracket.name) private bracketModel: Model<BracketDocument>
+  ) { }
 
   @Post()
   async createEvent(
@@ -71,6 +75,25 @@ export class EventController {
     } catch (error) {
       console.error(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).send('Error deleting event');
+    }
+  }
+
+  @Get('leaderboard/:tournamentId')
+  async leaderBoard(@Param('tournamentId') tournamentId: string) {
+    const obj: Record<string, any> = {}
+    const brackets = await this.bracketModel.find({ tournamentId: tournamentId })
+    if (brackets && brackets.length) {
+      for (const bracket of brackets) {
+        if (obj[bracket.round]) {
+          obj[bracket.round].push(bracket)
+        }
+        else {
+          obj[bracket.round] = [bracket]
+        }
+      }
+    }
+    return {
+      data: obj
     }
   }
 }
